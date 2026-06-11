@@ -1,0 +1,22 @@
+services:
+  gitlab-ci-validate-shell-qa-kit:
+    image: gitlab-registry.fizn.ru/library/docker-images/local-tests/gitlab-ci-validate:latest
+    container_name: gitlab-ci-validate-shell-qa-kit
+    env_file: ./.env
+    environment:
+      TRACE: false
+
+      CI_SERVER_HOST: ${CI_SERVER_HOST}
+      GITLAB_TOKEN: ${GITLAB_PASSWORD}
+      CI_PROJECT_ID: ${CI_PROJECT_ID}
+      CUSTOM_CA_FILE: "/run/secrets/ca.crt"
+      GITLAB_CI_FILES: ".gitlab-ci.yml"
+
+    volumes:
+      - /tmp/shell-qa-kit:/source
+    secrets:
+      - ca.crt
+
+secrets:
+  ca.crt:
+    file: /etc/ssl/certs/ca.crt

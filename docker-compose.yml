@@ -1,0 +1,45 @@
+services:
+  shell-qa-kit:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: ./.env
+    environment:
+      TRACE: false
+
+      BASH_SHELLCHECK_ENABLED: true
+      # ShellCheck [options](https://github.com/koalaman/shellcheck/blob/master/shellcheck.1.md)
+      BASH_SHELLCHECK_OPTS: ""
+      # Shell file(s) or pattern(s) to analyse
+      # Все: **/*.sh
+      BASH_SHELLCHECK_FILES: "./scripts/demo.sh"
+
+      BASH_BATS_ENABLED: false
+      # Bats [options](https://bats-core.readthedocs.io/en/stable/usage.html)
+      BASH_BATS_OPTS: "--trace --verbose-run"
+      # The path to a Bats test file, or the path to a directory containing Bats test files
+      BASH_BATS_TESTS: "tests"
+      # Coma separated list of Bats [libraries and add-ons](https://bats-core.readthedocs.io/en/stable/writing-tests.html#libraries-and-add-ons)
+      # Formatted as: `lib_name_1@archive_url_1 lib_name_2@archive_url_2 ...`
+      # Example: `bats-support@https://github.com/bats-core/bats-support/archive/v0.3.0.zip bats-assert@https://github.com/bats-core/bats-assert/archive/v2.0.0.zip`
+      BASH_BATS_LIBRARIES: "bats-support@https://github.com/bats-core/bats-support/archive/v0.3.0.zip bats-assert@https://github.com/bats-core/bats-assert/archive/v2.1.0.zip"
+
+      BASH_COVERAGE_ENABLED: true
+      # Glob pattern of files to track coverage
+      # Все: **/*.sh
+      BASH_COVERAGE_TRACK_FILES: "/source/scripts/demo.sh"
+      # Comma separated list of files and directories to filter out from your coverage data (e.g. 'tests/*, .tools' ).
+      BASH_COVERAGE_FILTERS: "/tmp/, ci/"
+      # Comma separated list of coverage report [formatters](https://github.com/simplecov-ruby/simplecov/blob/main/doc/alternate-formatters.md) and optional library/package name.
+      # Formatted as: `package-name1@formatter-class1, package-name2@formatter-class2 ...`
+      # Example: `simplecov-csv@SimpleCov::Formatter::CSVFormatter, SimpleCov::Formatter::SimpleFormatter`
+      BASH_COVERAGE_FORMATTERS: "SimpleCov::Formatter::SimpleFormatter"
+
+    volumes:
+      - /tmp/shell-qa-kit:/source
+    secrets:
+      - ca.crt
+
+secrets:
+  ca.crt:
+    file: /etc/ssl/certs/ca.crt
